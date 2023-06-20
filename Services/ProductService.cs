@@ -53,9 +53,9 @@ namespace Northwind.Services
         }
 
         //Change the product
-        public ProductDTO UpdateProduct(ProductDTO model)
+        public ProductDTO UpdateProduct(int productId, ProductDTO model)
         {
-            var product = _context.Products.Find(model.ProductId);
+            var product = _context.Products.Find(productId);
             if (product == null)
             {
                 throw new InvalidOperationException("Product not found");
@@ -70,6 +70,7 @@ namespace Northwind.Services
             var updatedProductDto = _mapper.Map<ProductDTO>(product);
             return updatedProductDto;
         }
+
 
         //Delete a product
         public void DeleteProduct(int id)

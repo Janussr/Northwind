@@ -10,6 +10,7 @@ namespace Northwind.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class ProductController : ControllerBase
     {
         //Variable
@@ -23,7 +24,6 @@ namespace Northwind.Controllers
 
         //Try catch Mark the code -> righ click -> snippet -> surround code -> Search for 'try catch'
         //Get all products
-        [EnableCors("AllowOrigin")]
         [HttpGet]
         public IActionResult Get()
         {
@@ -64,7 +64,6 @@ namespace Northwind.Controllers
         }
 
 
-
         [HttpPost]
         public IActionResult Post(ProductDTO model)
         {
@@ -82,8 +81,8 @@ namespace Northwind.Controllers
 
 
 
-        [HttpPut]
-        public IActionResult Put(ProductDTO model)
+        [HttpPut("{productId}")]
+        public IActionResult Put(int productId, ProductDTO model)
         {
             if (model == null || model.ProductId == 0)
             {
@@ -94,18 +93,16 @@ namespace Northwind.Controllers
                 else if (model.ProductId == 0)
                 {
                     return BadRequest($"Product Id {model.ProductId} is invalid");
-
                 }
-
             }
-            var UpdatedProduct = _productService.UpdateProduct(model);
-            if (UpdatedProduct == null)
+
+            var updatedProduct = _productService.UpdateProduct(productId, model);
+            if (updatedProduct == null)
             {
-                return NotFound($"Product not found with id {model.ProductId}");
+                return NotFound($"Product not found with id {productId}");
             }
 
-            return Ok(UpdatedProduct);
-            //return Ok("Product details updated");
+            return Ok(updatedProduct);
         }
 
 
