@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Hosting;
 using Northwind.DTOs;
 using Northwind.Models;
 
+var policyName = "AllowOrigin";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -24,18 +26,19 @@ var mapperConfig = new MapperConfiguration(config =>
 });
 builder.Services.AddScoped<IMapper>(sp => mapperConfig.CreateMapper());
 
-
-//Might delete
-builder.Services.AddCors();
 // Line 29: Add CORS services
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.WithOrigins("http://localhost:3000") // Allow requests from this origin
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    });
+    options.AddPolicy(name: policyName,
+                      builder =>
+                      {
+                          builder
+                            .WithOrigins("http://localhost:3000")
+                            //.AllowAnyOrigin()
+                            //.WithMethods("GET")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                      });
 });
 
 
@@ -49,7 +52,6 @@ builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<SupplierService>();
 
 var app = builder.Build();
-app.UseCors("AllowOrigin");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -59,6 +61,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(policyName);
 
 app.UseAuthorization();
 
